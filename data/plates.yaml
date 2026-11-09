@@ -1,0 +1,8 @@
+# Export your annotated plate-detection dataset in YOLO format into data/plates/.
+path: ./data/plates
+train: images/train
+val: images/val
+test: images/test
+
+names:
+  0: license_plate

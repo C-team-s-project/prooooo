@@ -1,0 +1,90 @@
+{
+  "torch_loaded": false,
+  "cases": [
+    {
+      "expected_region": "Japan",
+      "expected_plate": "倉敷 580 わ 47-50",
+      "source": "user screenshot, plate cropped",
+      "predictions": [
+        {
+          "plate": "倉敷 580 わ 47-50",
+          "region": "Japan",
+          "country": "Япон",
+          "ocr_score": 0.933565,
+          "region_score": null
+        }
+      ],
+      "country_ok": true,
+      "exact_ok": true,
+      "seconds": 4.36
+    },
+    {
+      "expected_region": "South Korea",
+      "expected_plate": "12가3456",
+      "source": "public Korean government reference graphic, plate cropped",
+      "predictions": [
+        {
+          "plate": "12가3456",
+          "region": "South Korea",
+          "country": "Өмнөд Солонгос",
+          "ocr_score": 0.99669,
+          "region_score": null
+        }
+      ],
+      "country_ok": true,
+      "exact_ok": true,
+      "seconds": 2.78
+    },
+    {
+      "expected_region": "United States",
+      "expected_plate": "3SAM123",
+      "source": "https://commons.wikimedia.org/wiki/File:California_3sam123_Sample_license_plate_1992.jpg",
+      "predictions": [
+        {
+          "plate": "3SAM123",
+          "region": "United States",
+          "country": "АНУ",
+          "ocr_score": 0.9998913526535034,
+          "region_score": 0.9999669790267944
+        }
+      ],
+      "country_ok": true,
+      "exact_ok": true,
+      "seconds": 1.83
+    },
+    {
+      "expected_region": "Mongolia",
+      "expected_plate": "9638УЕН",
+      "source": "user photo",
+      "predictions": [
+        {
+          "plate": "9638УЕН",
+          "region": "Mongolia",
+          "country": "Монгол",
+          "ocr_score": 0.94628,
+          "region_score": null
+        }
+      ],
+      "country_ok": true,
+      "exact_ok": true,
+      "seconds": 5.06
+    },
+    {
+      "expected_region": "Germany",
+      "expected_plate": "NMOM293",
+      "source": "https://commons.wikimedia.org/wiki/File:Alemanya-NM-OM293.png",
+      "predictions": [
+        {
+          "plate": "NMOM293",
+          "region": "Germany",
+          "country": "Герман",
+          "ocr_score": 0.999738621711731,
+          "region_score": 1.0
+        }
+      ],
+      "country_ok": true,
+      "exact_ok": true,
+      "seconds": 4.21
+    }
+  ]
+}
