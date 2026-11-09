@@ -213,6 +213,7 @@ def render_results_panel():
                 st.text(error)
         if results:
             st.success(f"{st.session_state['recognition_count']} танилт бүртгэгдлээ.", icon=":material/check_circle:")
+            st.warning("Автомат уншилт — дугаарын текстийг эх зурагтай тулгаж шалгана уу. OCR оноо нь зөв уншсан магадлал биш; хадгалсан нь баталгаажуулсан гэсэн үг биш.")
             for result in results:
                 with st.container(border=True):
                     st.caption("УЛСЫН ДУГААР")

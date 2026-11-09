@@ -95,6 +95,12 @@ class OnnxTextReader:
         from rapidocr.utils.output import RapidOCROutput
 
         bgr = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+        # Keep original pixels as one hypothesis; enhancement cannot recover
+        # missing detail and must never replace the original observation.
+        if self.language == "cyrillic":
+            enhanced = enhance_plate(bgr)
+        else:
+            enhanced = None
         result = cast(RapidOCROutput, self.engine(bgr, use_det=True, use_cls=False))
         rows = []
         if result.boxes is not None and result.txts is not None and result.scores is not None:
@@ -104,24 +110,38 @@ class OnnxTextReader:
         # Also recognize the plate as a line (the lower line for Japanese plates).
         h, w = bgr.shape[:2]
         y = int(h * 0.40) if self.language == "japan" else 0
-        variants = [bgr[y:]]
+        variants = [(bgr[y:], y, h)]
         if self.language == "japan":
             # Kana is much smaller than the serial digits. Without a margin the
             # line recognizer can drop it even when the digits are very clear.
             # Retain the original line and retry with a replicated border.
             padding = max(4, round(min(h - y, w) * 0.10))
-            variants.append(cv2.copyMakeBorder(bgr[y:], padding, padding, padding, padding, cv2.BORDER_REPLICATE))
+            variants.append((cv2.copyMakeBorder(bgr[y:], padding, padding, padding, padding, cv2.BORDER_REPLICATE), y, h))
         if self.language == "korean":
             gray = cv2.cvtColor(bgr, cv2.COLOR_BGR2GRAY)
-            variants.append(cv2.threshold(gray, 80, 255, cv2.THRESH_BINARY)[1])
+            variants.append((cv2.threshold(gray, 80, 255, cv2.THRESH_BINARY)[1], 0, h))
+        if enhanced is not None:
+            variants.append((enhanced, 0, h))
         if self.language == "cyrillic" and h / w >= .50:
-            variants.extend([bgr[:max(1, int(h * .53))], bgr[int(h * .48):]])
-        for variant in variants:
+            top, bottom = max(1, int(h * .53)), int(h * .48)
+            for source in (bgr, enhanced):
+                variants.extend([(source[:top], 0, top), (source[bottom:], bottom, h)])
+        for variant, line_y1, line_y2 in variants:
             line = cast(TextRecOutput, self.engine(variant, use_det=False, use_cls=False))
             for text, score in zip(line.txts or (), line.scores or ()):
                 if text and float(score) >= 0.40:
-                    rows.append(([[0, y], [w, y], [w, h], [0, h]], text, float(score)))
+                    rows.append(([[0, line_y1], [w, line_y1], [w, line_y2], [0, line_y2]], text, float(score)))
         return rows
+
+
+def enhance_plate(image: Any):
+    """Improve local contrast without inventing characters or changing size."""
+    import cv2
+
+    lab = cv2.cvtColor(image, cv2.COLOR_BGR2LAB)
+    light, a, b = cv2.split(lab)
+    light = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(4, 4)).apply(light)
+    return cv2.cvtColor(cv2.merge((light, a, b)), cv2.COLOR_LAB2BGR)
 
 
 @lru_cache(maxsize=1)
@@ -332,6 +352,11 @@ def recognize_global(image: Any, alpr: Any):
             row[1] for row in japanese_rows + korean_rows if float(row[2]) >= 0.60
         )):
             # Asian script without enough layout evidence is not proof of Japan.
+            region, region_score = "Unknown", None
+        elif any(float(score) >= .65 and len(re.findall(r"[А-ЯӨҮ]", text.upper())) >= 2
+                 for _, text, score in cyrillic_rows):
+            # Cyrillic evidence contradicts a Latin-only global guess, but
+            # unreadable digits are insufficient to assert a Mongolian plate.
             region, region_score = "Unknown", None
         elif region_score is not None and float(region_score) < .75:
             region, region_score = "Unknown", None
