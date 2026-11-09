@@ -1,0 +1,126 @@
+{
+  "tested_at": "2026-11-09",
+  "torch_loaded": false,
+  "cases": [
+    {
+      "case": "Japan original photo",
+      "shape": [
+        480,
+        640,
+        3
+      ],
+      "expected_country": "Japan",
+      "expected_plate": "倉敷 580 わ 47-50",
+      "predictions": [
+        {
+          "plate": "倉敷 580 わ 47-50",
+          "region": "Japan",
+          "country": "Япон",
+          "ocr_score": 0.97921
+        }
+      ],
+      "passed": true,
+      "seconds": 7.39
+    },
+    {
+      "case": "Japan screenshot crop",
+      "shape": [
+        279,
+        527,
+        3
+      ],
+      "expected_country": "Japan",
+      "expected_plate": "倉敷 580 わ 47-50",
+      "predictions": [
+        {
+          "plate": "倉敷 580 わ 47-50",
+          "region": "Japan",
+          "country": "Япон",
+          "ocr_score": 0.9467700000000001
+        }
+      ],
+      "passed": true,
+      "seconds": 2.18
+    },
+    {
+      "case": "South Korea reference",
+      "shape": [
+        355,
+        1347,
+        3
+      ],
+      "expected_country": "South Korea",
+      "expected_plate": "12가3456",
+      "predictions": [
+        {
+          "plate": "12가3456",
+          "region": "South Korea",
+          "country": "Өмнөд Солонгос",
+          "ocr_score": 0.99669
+        }
+      ],
+      "passed": true,
+      "seconds": 4.04
+    },
+    {
+      "case": "United States reference",
+      "shape": [
+        250,
+        500,
+        3
+      ],
+      "expected_country": "United States",
+      "expected_plate": "3SAM123",
+      "predictions": [
+        {
+          "plate": "3SAM123",
+          "region": "United States",
+          "country": "АНУ",
+          "ocr_score": 0.9998913526535034
+        }
+      ],
+      "passed": true,
+      "seconds": 2.72
+    },
+    {
+      "case": "Mongolia original photo",
+      "shape": [
+        720,
+        720,
+        3
+      ],
+      "expected_country": "Mongolia",
+      "expected_plate": "9638УЕН",
+      "predictions": [
+        {
+          "plate": "9638УЕН",
+          "region": "Mongolia",
+          "country": "Монгол",
+          "ocr_score": 0.94628
+        }
+      ],
+      "passed": true,
+      "seconds": 7.61
+    },
+    {
+      "case": "Germany reference",
+      "shape": [
+        441,
+        2000,
+        3
+      ],
+      "expected_country": "Germany",
+      "expected_plate": "NMOM293",
+      "predictions": [
+        {
+          "plate": "NMOM293",
+          "region": "Germany",
+          "country": "Герман",
+          "ocr_score": 0.999738621711731
+        }
+      ],
+      "passed": true,
+      "seconds": 8.5
+    }
+  ]
+}

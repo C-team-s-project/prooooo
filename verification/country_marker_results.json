@@ -1,0 +1,167 @@
+{
+  "tested_at": "2026-11-09",
+  "cases": [
+    {
+      "case": "Mongolia two lines, previously UK",
+      "expected_country": "Mongolia",
+      "expected_plate": "1742УБР",
+      "required": true,
+      "predictions": [
+        {
+          "plate": "1742УБР",
+          "region": "Mongolia",
+          "country": "Монгол",
+          "code": "MGL",
+          "ocr_score": 0.80002
+        }
+      ],
+      "country_ok": true,
+      "text_ok": true,
+      "seconds": 5.13
+    },
+    {
+      "case": "Mongolia single line",
+      "expected_country": "Mongolia",
+      "expected_plate": "9638УЕН",
+      "required": true,
+      "predictions": [
+        {
+          "plate": "9638УЕН",
+          "region": "Mongolia",
+          "country": "Монгол",
+          "code": "MGL",
+          "ocr_score": 0.89631
+        }
+      ],
+      "country_ok": true,
+      "text_ok": true,
+      "seconds": 4.77
+    },
+    {
+      "case": "Japan original",
+      "expected_country": "Japan",
+      "expected_plate": "倉敷 580 わ 47-50",
+      "required": true,
+      "predictions": [
+        {
+          "plate": "倉敷 580 わ 47-50",
+          "region": "Japan",
+          "country": "Япон",
+          "code": "JPN",
+          "ocr_score": 0.97921
+        }
+      ],
+      "country_ok": true,
+      "text_ok": true,
+      "seconds": 2.73
+    },
+    {
+      "case": "USA reference",
+      "expected_country": "United States",
+      "expected_plate": "3SAM123",
+      "required": true,
+      "predictions": [
+        {
+          "plate": "3SAM123",
+          "region": "United States",
+          "country": "АНУ",
+          "code": "USA",
+          "ocr_score": 0.9998913526535034
+        }
+      ],
+      "country_ok": true,
+      "text_ok": true,
+      "seconds": 2.58
+    },
+    {
+      "case": "Korea reference",
+      "expected_country": "South Korea",
+      "expected_plate": "12가3456",
+      "required": true,
+      "predictions": [
+        {
+          "plate": "12가3456",
+          "region": "South Korea",
+          "country": "Өмнөд Солонгос",
+          "code": "KOR",
+          "ocr_score": 0.99669
+        }
+      ],
+      "country_ok": true,
+      "text_ok": true,
+      "seconds": 4.28
+    },
+    {
+      "case": "Germany reference",
+      "expected_country": "Germany",
+      "expected_plate": "NMOM293",
+      "required": true,
+      "predictions": [
+        {
+          "plate": "NMOM293",
+          "region": "Germany",
+          "country": "Герман",
+          "code": "DEU",
+          "ocr_score": 0.999738621711731
+        }
+      ],
+      "country_ok": true,
+      "text_ok": true,
+      "seconds": 6.6
+    },
+    {
+      "case": "Mongolia small front plate",
+      "expected_country": "Mongolia",
+      "expected_plate": "8804ДОУ",
+      "required": true,
+      "predictions": [
+        {
+          "plate": "8804ДОУ",
+          "region": "Mongolia",
+          "country": "Монгол",
+          "code": "MGL",
+          "ocr_score": 0.67481
+        }
+      ],
+      "country_ok": true,
+      "text_ok": true,
+      "seconds": 4.79
+    },
+    {
+      "case": "Mongolia blurry rear plate",
+      "expected_country": "Mongolia",
+      "expected_plate": "7960УЕХ",
+      "required": false,
+      "predictions": [
+        {
+          "plate": "7960YEX",
+          "region": "Unknown",
+          "country": "Тодорхойгүй",
+          "code": "—",
+          "ocr_score": 0.9836263358592987
+        }
+      ],
+      "country_ok": false,
+      "text_ok": false,
+      "seconds": 1.87
+    },
+    {
+      "case": "Mongolia night plate",
+      "expected_country": "Mongolia",
+      "expected_plate": null,
+      "required": false,
+      "predictions": [
+        {
+          "plate": "5797ДОВ",
+          "region": "Mongolia",
+          "country": "Монгол",
+          "code": "MGL",
+          "ocr_score": 0.69913
+        }
+      ],
+      "country_ok": true,
+      "text_ok": null,
+      "seconds": 4.61
+    }
+  ]
+}
