@@ -89,7 +89,7 @@ class DashboardTests(unittest.TestCase):
         self.assertFalse(any(self.source in str(node.value) for node in at.caption))
         result = [(np.zeros((70, 250, 3), dtype=np.uint8), "1234УБА", .98, "Mongolia", None)]
         with patch.object(dashboard, "international_alpr", return_value=object()), \
-                patch.object(dashboard, "recognize_global", return_value=result):
+                patch.object(dashboard, "recognize_mongolian", return_value=result):
             at.button(key="recognize_media").click().run()
         self.assertFalse(at.exception)
         self.assertEqual(self.count(), 3)
@@ -116,7 +116,7 @@ class DashboardTests(unittest.TestCase):
         at = self.app()
         at.file_uploader[0].set_value((self.source, self.image_bytes(), "image/jpeg")).run()
         with patch.object(dashboard, "international_alpr", return_value=object()), \
-                patch.object(dashboard, "recognize_global", return_value=[]):
+                patch.object(dashboard, "recognize_mongolian", return_value=[]):
             at.button(key="recognize_media").click().run()
         self.assertFalse(at.exception)
         self.assertTrue(at.warning)
@@ -145,6 +145,7 @@ class DashboardTests(unittest.TestCase):
         before = set((plate_core.ROOT / "uploads").glob("*"))
         at = self.app()
         at.file_uploader[0].set_value(("long_video_name.avi", path.read_bytes(), "video/x-msvideo")).run()
+        at.radio(key="recognition_mode").set_value("Гадаад дугаар").run()
         result = [(np.zeros((70, 250, 3), dtype=np.uint8), "B1234", .95, "Germany", .9)]
         with patch.object(dashboard, "international_alpr", return_value=object()), \
                 patch.object(dashboard, "recognize_global", return_value=result) as recognize:

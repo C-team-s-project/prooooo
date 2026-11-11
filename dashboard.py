@@ -16,6 +16,7 @@ import streamlit as st
 from PIL import Image, ImageOps
 
 from plate_core import APP_TIMEZONE, ROOT, country_code, country_name, database, load_global_alpr, recognize_global, save_detection
+from mongolian_ocr import recognize_global as recognize_mongolian
 
 
 def dashboard_data():
@@ -98,7 +99,7 @@ def international_alpr():
     return load_global_alpr()
 
 
-def process_media(media: dict[str, Any], preview: Any, step: int):
+def process_media(media: dict[str, Any], preview: Any, step: int, mode: str = "international"):
     """Save on explicit recognition only; subsequent UI reruns reuse the results."""
     saved: list[dict[str, Any]] = []
     found = 0
@@ -110,6 +111,8 @@ def process_media(media: dict[str, Any], preview: Any, step: int):
     def register(frame_results):
         nonlocal found
         for crop, plate, score, region, region_score in frame_results:
+            if not plate:
+                continue
             record_id = save_detection(plate, score, media["source"], country=region or "Unknown")
             saved.append({"crop": crop, "plate": plate, "score": score, "region": region,
                           "region_score": region_score, "id": record_id})
@@ -119,6 +122,7 @@ def process_media(media: dict[str, Any], preview: Any, step: int):
     try:
         with st.spinner("Дугаар болон улсын шинжийг уншиж байна…"):
             alpr = international_alpr()
+            recognize_frame = recognize_mongolian if mode == "mongolia" else recognize_global
             if media["suffix"] in {".mp4", ".avi", ".mov"}:
                 directory = ROOT / "uploads"
                 directory.mkdir(exist_ok=True)
@@ -136,13 +140,13 @@ def process_media(media: dict[str, Any], preview: Any, step: int):
                     if not ok:
                         break
                     if index % step == 0:
-                        register(recognize_global(frame, alpr))
+                        register(recognize_frame(frame, alpr))
                     index += 1
                     if index % step == 0:
                         progress.progress(min(index / total, 1.0), text=f"{found} танилт бүртгэгдлээ")
                 progress.progress(1.0)
             else:
-                register(recognize_global(cv2.cvtColor(np.array(preview), cv2.COLOR_RGB2BGR), alpr))
+                register(recognize_frame(cv2.cvtColor(np.array(preview), cv2.COLOR_RGB2BGR), alpr))
     except Exception as exc:
         st.session_state["recognition_error"] = str(exc)
     finally:
@@ -161,6 +165,8 @@ def render_source_panel():
     with st.container(border=True):
         st.caption("01 / ЭХ ФАЙЛ")
         st.subheader("Зураг эсвэл видео", icon=":material/add_photo_alternate:")
+        selection = st.radio("Таних дугаар", ["Монгол дугаар", "Гадаад дугаар"], horizontal=True, key="recognition_mode")
+        mode = "mongolia" if selection == "Монгол дугаар" else "international"
         media = st.session_state["media"]
         if media is None:
             st.caption("Файлаа доорх хэсэгт чирж оруулах эсвэл сонгоно уу.")
@@ -198,7 +204,7 @@ def render_source_panel():
         step = st.slider("Видео шалгах алхам", 1, 60, 10, key="video_step", help="Хэдэн кадр тутамд дугаар хайхыг сонгоно.") if is_video else 10
         if st.button("Видео таних" if is_video else "Дугаар таних", type="primary", width="stretch",
                      icon=":material/document_scanner:", key="recognize_media", disabled=not valid):
-            process_media(media, preview, step)
+            process_media(media, preview, step, mode=mode)
 
 
 def render_results_panel():
@@ -213,7 +219,6 @@ def render_results_panel():
                 st.text(error)
         if results:
             st.success(f"{st.session_state['recognition_count']} танилт бүртгэгдлээ.", icon=":material/check_circle:")
-            st.warning("Автомат уншилт — дугаарын текстийг эх зурагтай тулгаж шалгана уу. OCR оноо нь зөв уншсан магадлал биш; хадгалсан нь баталгаажуулсан гэсэн үг биш.")
             for result in results:
                 with st.container(border=True):
                     st.caption("УЛСЫН ДУГААР")
@@ -224,7 +229,6 @@ def render_results_panel():
                     st.caption(f"Бүртгэл #{result['id']:05d} · Амжилттай хадгалагдсан")
             if st.session_state["recognition_count"] > len(results):
                 st.caption("Энд сүүлийн 10 танилтыг харуулж байна. Бүх танилт бүртгэлийн түүхэнд хадгалагдсан.")
-            st.caption("Улсын нэр нь автомат таамаг. OCR оноо нь бодит үнэн зөвийн баталгаа биш.")
         elif st.session_state["recognition_done"] and not error:
             st.warning("Дугаар олдсонгүй. Илүү тод, ойроос авсан зураг сонгоод дахин оролдоорой.")
         elif not error:
